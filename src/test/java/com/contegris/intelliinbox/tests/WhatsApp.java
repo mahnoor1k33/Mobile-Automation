@@ -1,28 +1,23 @@
 package com.contegris.intelliinbox.tests;
 
-import com.contegris.intelliinbox.base.BasePage;
+import com.contegris.intelliinbox.base.BaseTest;
 import com.contegris.intelliinbox.pages.*;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class WhatsApp extends BasePage {
+public class WhatsApp extends BaseTest { // Extends BaseTest, not BasePage
 
-    @BeforeClass
-    public void setupTest() throws Exception {
-        setUp();
-    }
-
-    @Test
+    @Test(priority = 2, description = "Test inbound WhatsApp interaction flow")
     public void testInboundWhatsappFlow() throws InterruptedException {
-        InteractionAcceptancePage inbox = new InteractionAcceptancePage(driver, wait);
-        InteractionFlowPage chat = new InteractionFlowPage(driver, wait);
-        AttachmentModalPage attach = new AttachmentModalPage(driver, wait);
-        InteractionClosurePage closure = new InteractionClosurePage(getDriver());
+        // Pass only driver to each page - they initialize their own wait
+        InteractionAcceptancePage inbox = new InteractionAcceptancePage(driver);
+        InteractionFlowPage chat = new InteractionFlowPage(driver);
+        AttachmentModalPage attach = new AttachmentModalPage(driver);
+        InteractionClosurePage closure = new InteractionClosurePage(driver);
 
         inbox.openTeamInbox();
-        inbox.clickFirstCard("Mahnoor");
-        inbox.clickAssignOrJoin();
+        inbox.clickFirstCard("Hey");
+        inbox.clickAssignOrJoinIfAvailable();
+
         chat.sendCannedMessage("Thanks");
         chat.sendWhatsAppTemplate("we_are_back_contegris_support");
         chat.sendMessageWithEmoji("Hi, how may I help you today?");
@@ -30,6 +25,10 @@ public class WhatsApp extends BasePage {
 
         attach.clickPlusButton();
         attach.uploadAttachment("image");
+        attach.uploadAttachment("audio");
+        attach.uploadAttachment("video");
+        attach.uploadAttachment("document");
+
         closure.addNote();
         closure.openPlusMenu();
         closure.addWorkCode("Hot Lead");
@@ -37,31 +36,31 @@ public class WhatsApp extends BasePage {
         closure.endInteraction("Contact Center");
     }
 
-    @Test
+    @Test(priority = 1, description = "Test outbound WhatsApp interaction flow")
     public void testOutboundWhatsappFlow() throws InterruptedException {
+        // Pass only driver to each page
         OutboundModalPage out = new OutboundModalPage(driver);
-        InteractionAcceptancePage inbox = new InteractionAcceptancePage(driver, wait);
-        InteractionFlowPage chat = new InteractionFlowPage(driver, wait);
-        AttachmentModalPage attach = new AttachmentModalPage(driver, wait);
-        InteractionClosurePage closure = new InteractionClosurePage(getDriver());
+        InteractionAcceptancePage inbox = new InteractionAcceptancePage(driver);
+        InteractionFlowPage chat = new InteractionFlowPage(driver);
+        AttachmentModalPage attach = new AttachmentModalPage(driver);
+        InteractionClosurePage closure = new InteractionClosurePage(driver);
 
         out.makeWhatsappOutbound("923057204466");
-        // inbox.clickAssignOrJoin();
-//        chat.sendCannedMessage("Thanks");
-//        chat.sendWhatsAppTemplate("we_are_back_contegris_support");
-//        chat.sendMessageWithEmoji("Hi, how may I help you today?");
+        inbox.clickAssignOrJoinIfAvailable();
+
+        chat.sendCannedMessage("Thanks");
+        chat.sendWhatsAppTemplate("we_are_back_contegris_support");
+        chat.sendMessageWithEmoji("Hi, how may I help you today?");
         // chat.recordAndSendVoiceNote();
 
-//        attach.clickPlusButton();
-//        attach.uploadAttachment("image");
+        attach.clickPlusButton();
+        attach.uploadAttachment("file");
+
         closure.addNote();
         closure.addWorkCode("Hot Lead");
         closure.closeBottomSheet();
         closure.endInteraction("Contact Center");
     }
 
-    @AfterClass
-    public void tearDownTest() {
-        tearDown();
-    }
+    // No @BeforeClass or @AfterClass is needed - BaseTest handles it with @BeforeMethod/@AfterMethod
 }

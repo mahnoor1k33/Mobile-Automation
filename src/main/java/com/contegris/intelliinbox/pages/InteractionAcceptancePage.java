@@ -10,19 +10,20 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 public class InteractionAcceptancePage extends BasePage {
 
     // ---------- LOCATORS ---------- //
-    private final By teamInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id='android:id/content']//android.widget.ImageView[2]");
+    private final By teamInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[2]");
     private final By joinButton = AppiumBy.accessibilityId("Join");
     private final By assignButton = AppiumBy.accessibilityId("Assign");
     private final By acceptButton = AppiumBy.accessibilityId("New Call request from \\nMahnoor QA\\nDefaultIVR\\ndefaultQueue\\nAccept");
     private final By rejectButton =  AppiumBy.accessibilityId("Reject");
     private final By incomingRequestCard = AppiumBy.androidUIAutomator("new UiSelector().descriptionContains(\"New\")");
 
-    public InteractionAcceptancePage(AndroidDriver driver, WebDriverWait wait) {
-        this.driver = driver;
-        this.wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, java.time.Duration.ofSeconds(20));
+    public InteractionAcceptancePage(AndroidDriver driver) {
+        super(driver);
     }
 
     // ---------- TEAM INBOX SECTION ---------- //
@@ -34,25 +35,43 @@ public class InteractionAcceptancePage extends BasePage {
     }
 
     /** Clicks the first available card based on customer name */
-    public void clickFirstCard(String customerName) {
+    public void clickFirstCard(String lastMessage) {
         WebElement firstCard = wait.until(ExpectedConditions.elementToBeClickable(
                 AppiumBy.androidUIAutomator(
                         "new UiScrollable(new UiSelector().scrollable(true))" +
-                                ".scrollIntoView(new UiSelector().clickable(true).descriptionContains(\"" + customerName + "\"))")
+                                ".scrollIntoView(new UiSelector().descriptionContains(\"" + lastMessage + "\"))"
+                )
         ));
         firstCard.click();
-        System.out.println("🟢 Clicked on Team Inbox card for customer: " + customerName);
+        System.out.println("The last message in this Interaction is: " + lastMessage);
     }
 
     /** Clicks either 'Join' or 'Assign' button based on availability */
-    public void clickAssignOrJoin() {
+    private boolean isElementDisplayed(By locator, WebDriverWait wait) {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(joinButton)).click();
-            System.out.println("✅ Joined interaction successfully.");
+            wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            return true;
         } catch (Exception e) {
-            wait.until(ExpectedConditions.elementToBeClickable(assignButton)).click();
-            System.out.println("✅ Assigned interaction successfully.");
+            return false;
         }
+    }
+
+    public void clickAssignOrJoinIfAvailable() {
+        WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+        if (isElementDisplayed(assignButton, shortWait)) {
+            driver.findElement(assignButton).click();
+            System.out.println("✅ Assigned interaction successfully.");
+            return;
+        }
+
+        if (isElementDisplayed(joinButton, shortWait)) {
+            driver.findElement(joinButton).click();
+            System.out.println("✅ Joined interaction successfully.");
+            return;
+        }
+
+        System.out.println("ℹ️ Interaction already assigned. Skipping.");
     }
 
     // ---------- INBOUND INTERACTION SECTION ---------- //

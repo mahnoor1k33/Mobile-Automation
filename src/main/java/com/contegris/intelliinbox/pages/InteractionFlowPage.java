@@ -6,10 +6,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-
-import java.time.Duration;
 
 public class InteractionFlowPage extends BasePage {
 
@@ -34,13 +31,13 @@ public class InteractionFlowPage extends BasePage {
     private final By addNotesField = AppiumBy.xpath("//android.widget.EditText");
     private final By notesBackButton = AppiumBy.xpath("//android.view.View[@content-desc='Notes\nAdd Note']/android.widget.ImageView[2]");
 
-    // 🔹 Constructor
-    public InteractionFlowPage(AndroidDriver driver, WebDriverWait wait) {
-        this.driver = driver;
-        this.wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, java.time.Duration.ofSeconds(20));
+    // 🔹 Constructor - FIXED
+    public InteractionFlowPage(AndroidDriver driver) {
+        super(driver); // ✅ Pass driver to BasePage constructor
+        // No need to initialize driver and wait again - BasePage does it!
     }
 
-    public void clickReplyButton () throws InterruptedException {
+    public void clickReplyButton() throws InterruptedException {
         waitAndClick(replyButton);
         System.out.println("Reply button gets clicked");
         Thread.sleep(2000);
@@ -94,47 +91,46 @@ public class InteractionFlowPage extends BasePage {
 
     // 🔹 4. Record and Send Voice Note
     public void recordAndSendVoiceNote() {
-            try {
-                System.out.println("🎤 Starting voice note flow...");
+        try {
+            System.out.println("🎤 Starting voice note flow...");
 
-                waitAndClick(voiceNoteButton);
-                System.out.println("🎙 Recording started...");
+            waitAndClick(voiceNoteButton);
+            System.out.println("🎙 Recording started...");
 
-                // Wait until pause button is visible and clickable
-                waitUntilClickable(pauseButton, 10);
-                waitAndClick(pauseButton);
-                System.out.println("⏸ Recording paused...");
+            // Wait until pause button is visible and clickable
+            waitUntilClickable(pauseButton, 10);
+            waitAndClick(pauseButton);
+            System.out.println("⏸ Recording paused...");
 
-                // Wait until resume button is visible and clickable
-                waitUntilClickable(resumeButton, 10);
-                waitAndClick(resumeButton);
-                System.out.println("▶️ Recording resumed...");
+            // Wait until resume button is visible and clickable
+            waitUntilClickable(resumeButton, 10);
+            waitAndClick(resumeButton);
+            System.out.println("▶️ Recording resumed...");
 
-                waitUntilClickable(sendVoiceNoteButton, 10);
-                waitAndClick(sendVoiceNoteButton);
-                System.out.println("✅ Voice note sent successfully!");
+            waitUntilClickable(sendVoiceNoteButton, 10);
+            waitAndClick(sendVoiceNoteButton);
+            System.out.println("✅ Voice note sent successfully!");
 
-            } catch (Exception e) {
-                System.out.println("❌ Voice note flow failed: " + e.getMessage());
-            }
+        } catch (Exception e) {
+            System.out.println("❌ Voice note flow failed: " + e.getMessage());
         }
+    }
+
     public void verifyWhatsAppWindowExpiry() {
         try {
-            if(!isElementPresent(messageInput))
-            {
+            if(!isElementPresent(messageInput)) {
                 isElementPresent(expiryMessage);
                 System.out.println("✅ WhatsApp 24-hour expiry message verified.");
-            }
-            else {
+            } else {
                 System.out.println("Editor is enabled");
                 sendCannedMessage("Thanks");
                 sendMessageWithEmoji("Hi!");
-
             }
         } catch (Exception e) {
             System.out.println("❌ Failed to verify WhatsApp window expiry: " + e.getMessage());
         }
     }
+
     public void addNote() {
         waitAndClick(plusButton);
         waitAndClick(notesButton);
@@ -148,6 +144,4 @@ public class InteractionFlowPage extends BasePage {
         waitAndClick(notesBackButton);
         System.out.println("🟢 Clicked Back Button from Notes");
     }
-
-
 }

@@ -1,20 +1,19 @@
 package com.contegris.intelliinbox.tests;
 
-import com.contegris.intelliinbox.base.BasePage;
+import com.contegris.intelliinbox.base.BaseTest;
 import com.contegris.intelliinbox.pages.SideBarMenuPage;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class Logout extends BasePage {
+public class Logout extends BaseTest { // ✅ Extends BaseTest, not BasePage
 
     private final By loginButton = AppiumBy.accessibilityId("Login");
 
     @Test(description = "Verify that the user can successfully log out and see the login screen.")
-
     public void verifyLogoutFunctionality() {
-        SideBarMenuPage sideMenu = new SideBarMenuPage(driver, wait);
+        SideBarMenuPage sideMenu = new SideBarMenuPage(driver); // ✅ Pass only driver
 
         try {
             System.out.println("🚀 Starting Logout Test...");
@@ -39,6 +38,16 @@ public class Logout extends BasePage {
         } catch (Exception e) {
             System.err.println("⚠️ Unexpected error during logout test: " + e.getMessage());
             Assert.fail("Test failed due to unexpected exception: " + e.getMessage());
+        }
+    }
+
+    // ✅ Helper method - moved from inline usage
+    private boolean isElementPresent(By locator) {
+        try {
+            driver.findElement(locator);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

@@ -29,8 +29,7 @@ public class InteractionClosurePage extends BasePage {
 
     // ✅ Constructor: gets driver from BaseTest
     public InteractionClosurePage(AndroidDriver driver) {
-        this.driver = driver;
-        this.wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, java.time.Duration.ofSeconds(20));
+        super(driver);
     }
 
     // Adding Notes before ending the Interaction

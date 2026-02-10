@@ -1,85 +1,42 @@
 package com.contegris.intelliinbox.base;
 
-import com.contegris.intelliinbox.utils.ConfigReader;
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.options.UiAutomator2Options;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 
-import java.net.URL;
+import java.time.Duration;
 
-import static java.time.Duration.ofSeconds;
+/**
+ * BasePage: Provides reusable helper methods for all Page Objects
+ * Pages extend this to access common actions like waitAndClick()
+ */
 
 public class BasePage {
     protected AndroidDriver driver;
     protected WebDriverWait wait;
 
-
-    @BeforeMethod
-    public void setUp() throws Exception {
-        UiAutomator2Options options = new UiAutomator2Options();
-        options.setPlatformName(ConfigReader.get("platformName"));
-        options.setDeviceName(ConfigReader.get("deviceName"));
-        options.setPlatformVersion(ConfigReader.get("platformVersion"));
-        options.setAutomationName(ConfigReader.get("automationName"));
-
-        options.setApp(ConfigReader.get("appPath"));
-
-        options.setAppPackage(ConfigReader.get("appPackage"));
-        options.setAppActivity(ConfigReader.get("appActivity"));
-
-        options.setNoReset(Boolean.parseBoolean(ConfigReader.get("noReset")));
-        options.setCapability("newCommandTimeout", 300);
-
-        driver = new AndroidDriver(new URL(ConfigReader.get("appiumServerURL")), options);
-        driver.manage().timeouts().implicitlyWait(ofSeconds(20));
-
-        // ✅ Initialize explicit wait here
-        wait = new WebDriverWait(driver, ofSeconds(20));
-
-        System.out.println("✅ Appium driver initialized!");
+    // Constructor - Every page must receive a driver
+    public BasePage(AndroidDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
-    @AfterMethod
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-            System.out.println("✅ Driver quit successfully!");
-        }
-    }
+    // ========== HELPER METHODS ==========
+    // These are the "reusable utilities" pages need
 
-    public AndroidDriver getDriver() {
-        return driver;
-    }
-
-    public WebDriverWait getWait() {
-        return wait;
-    }
-
-    // Helper Methods
     protected void waitAndClick(By locator) {
-
         wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
+        System.out.println("✅ Clicked: " + locator);
     }
 
     protected void waitAndSendKeys(By locator, String text) {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, ofSeconds(20));
-            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            element.sendKeys(text);
-            System.out.println("✅ Sent keys to: " + locator);
-        } catch (Exception e) {
-            System.out.println("❌ Failed to send keys: " + locator + " - " + e.getMessage());
-        }
-    }
-
-    protected void waitUntilClickable(By locator, int timeoutSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, ofSeconds(timeoutSeconds));
-        wait.until(ExpectedConditions.elementToBeClickable(locator));
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        element.clear();
+        element.sendKeys(text);
+        System.out.println("✅ Sent keys to: " + locator);
     }
 
     protected WebElement waitForVisible(By locator) {
@@ -95,5 +52,41 @@ public class BasePage {
         }
     }
 
+    protected void waitUntilClickable(By locator, int timeoutSeconds) {
+        WebDriverWait customWait = new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds));
+        customWait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
 
+   // Scrolls to the element by content-description and clicks.
+   protected void scrollToAndClickByDescription(String contentDesc) {
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
+                AppiumBy.androidUIAutomator(
+                        "new UiScrollable(new UiSelector().scrollable(true))" +
+                                ".scrollIntoView(new UiSelector().descriptionContains(\"" + contentDesc + "\"))"
+                )
+        ));
+        element.click();
+    }
+
+   // Scrolls to the element by text and clicks.
+    protected void scrollToAndClickByText(String text) {
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
+                AppiumBy.androidUIAutomator(
+                        "new UiScrollable(new UiSelector().scrollable(true))" +
+                                ".scrollIntoView(new UiSelector().textContains(\"" + text + "\"))"
+                )
+        ));
+        element.click();
+    }
+
+    // Scrolls to the element by resource-id and clicks.
+    protected void scrollToAndClickByResourceId(String resourceId) {
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(
+                AppiumBy.androidUIAutomator(
+                        "new UiScrollable(new UiSelector().scrollable(true))" +
+                                ".scrollIntoView(new UiSelector().resourceId(\"" + resourceId + "\"))"
+                )
+        ));
+        element.click();
+    }
 }

@@ -33,8 +33,7 @@ public class OutboundModalPage extends BasePage {
     private final By presenceIcon = By.xpath("//android.widget.ImageView[@clickable='true' and @content-desc]");
 
     public OutboundModalPage(AndroidDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        super(driver);
     }
 
     // -------------------- Actions --------------------

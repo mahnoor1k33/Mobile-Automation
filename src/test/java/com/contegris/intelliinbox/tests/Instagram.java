@@ -1,28 +1,25 @@
 package com.contegris.intelliinbox.tests;
 
-import com.contegris.intelliinbox.base.BasePage;
+import com.contegris.intelliinbox.base.BaseTest;
 import com.contegris.intelliinbox.pages.*;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class Instagram extends BasePage {
-
-    @BeforeClass
-    public void setupTest() throws Exception {
-        setUp();
-    }
+public class Instagram extends BaseTest { // ✅ Extends BaseTest, not BasePage
 
     @Test
     public void testInboundInstagramFlow() throws InterruptedException {
-        InteractionAcceptancePage inbox = new InteractionAcceptancePage(driver, wait);
-        InteractionFlowPage chat = new InteractionFlowPage(driver, wait);
-        AttachmentModalPage attach = new AttachmentModalPage(driver, wait);
-        InteractionClosurePage closure = new InteractionClosurePage(getDriver());
+        // driver is already initialized by @BeforeMethod in BaseTest
+
+        // ✅ Pass only driver to each page
+        InteractionAcceptancePage inbox = new InteractionAcceptancePage(driver);
+        InteractionFlowPage chat = new InteractionFlowPage(driver);
+        AttachmentModalPage attach = new AttachmentModalPage(driver);
+        InteractionClosurePage closure = new InteractionClosurePage(driver);
 
         inbox.openTeamInbox();
         inbox.clickFirstCard("Mahnoor Shoukat");
-        inbox.clickAssignOrJoin();
+        inbox.clickAssignOrJoinIfAvailable();
+
         chat.clickReplyButton();
         chat.sendCannedMessage("Thanks");
         chat.clickReplyButton();
@@ -39,8 +36,5 @@ public class Instagram extends BasePage {
         closure.endInteraction("Contact Center");
     }
 
-    @AfterClass
-    public void tearDownTest() {
-        tearDown();
-    }
+    // No need for @BeforeClass and @AfterClass - BaseTest handles it
 }

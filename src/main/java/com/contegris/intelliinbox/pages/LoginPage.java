@@ -1,66 +1,68 @@
 package com.contegris.intelliinbox.pages;
 
+import com.contegris.intelliinbox.base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
-import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
-public class LoginPage {
-    private AndroidDriver driver;
+public class LoginPage extends BasePage {
 
-    // ✅ Locators (same as your code)
-    private final By intelliconApp = AppiumBy.accessibilityId("Predicted app: Intellicon CX9i");
+    // Constructor - MUST accept driver
+    public LoginPage(AndroidDriver driver) {
+        super(driver); // Pass to BasePage constructor
+    }
+
+    // Locators
     private final By nextButton = AppiumBy.accessibilityId("Next");
     private final By domainField = By.xpath("//android.widget.EditText");
-    private final By usernameField = AppiumBy.xpath("(//android.widget.ImageView[@clickable='true' and @focusable='true'])[2]");
-    private final By passwordField = AppiumBy.xpath("(//android.widget.ImageView[@clickable='true' and @focusable='true'])[3]");
+    private final By usernameField = AppiumBy.xpath("//android.view.View[@content-desc='Enter your username or email']/android.widget.EditText");
+    private final By passwordField = AppiumBy.xpath("//android.view.View[@content-desc=\"Enter your password\"]/android.widget.EditText");
     private final By signInButton = AppiumBy.xpath("//android.widget.Button[@content-desc=\"Sign In\"]");
+    private final By allowButton = AppiumBy.accessibilityId("com.android.permissioncontroller:id/permission_allow_button");
+    private final By myInboxHeading = AppiumBy.accessibilityId("My Inbox");
 
-    public LoginPage(AndroidDriver driver) {
-        this.driver = driver;
-    }
-
+    // Page Methods - Use helper methods from BasePage
     public void launchApp() {
-        driver.findElement(intelliconApp).click();
-        System.out.println("✅ Intellicon App launched successfully!");
+        System.out.println("Intellicon App launched successfully!");
     }
 
-    public void enterDomainIfVisible(String domain) throws InterruptedException {
-        List<WebElement> nextButtons = driver.findElements(nextButton);
-        if (!nextButtons.isEmpty()) {
-            System.out.println("✅ Domain screen detected");
+    public void enterDomainIfVisible(String domain) {
+        if (isElementPresent(allowButton)) { // ← Using BasePage method
+            waitAndClick(allowButton);       // ← Using BasePage method
+            System.out.println("Permission allowed");
+        }
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement domainBox = wait.until(ExpectedConditions.visibilityOfElementLocated(domainField));
+        if (isElementPresent(domainField)) {
+            waitAndClick(domainField);
+            waitAndSendKeys(domainField, domain); // ← Using BasePage method
 
-            domainBox.click();
-            domainBox.clear();
-            domainBox.sendKeys(domain);
-
-            nextButtons.get(0).click();
-            System.out.println("Domain entered and Next button clicked!");
-            Thread.sleep(1000);
+            if (isElementPresent(nextButton)) {
+                waitAndClick(nextButton);
+                System.out.println("Domain entered and Next clicked");
+            }
         } else {
-            System.out.println("✅ Login screen detected directly");
+            System.out.println("Domain screen not displayed, skipping to login");
         }
     }
 
     public void login(String username, String password) {
-        WebElement usernameFieldElement = driver.findElement(usernameField);
-        usernameFieldElement.click();
+        waitAndClick(usernameField);
         driver.executeScript("mobile: type", Map.of("text", username));
 
-        WebElement passwordFieldElement = driver.findElement(passwordField);
-        passwordFieldElement.click();
+        waitAndClick(passwordField);
         driver.executeScript("mobile: type", Map.of("text", password));
 
-        driver.findElement(signInButton).click();
-        System.out.println("✅ Logged in successfully!");
+        waitAndClick(signInButton);
+        System.out.println("Logged in successfully!");
+    }
+
+    public void verifyMyInboxScreen() {
+        WebElement heading = waitForVisible(myInboxHeading); // ← Using BasePage method
+        Assert.assertEquals(heading.getText(), "My Inbox", "❌ My Inbox heading not displayed");
+        System.out.println("My Inbox screen verified");
     }
 }
