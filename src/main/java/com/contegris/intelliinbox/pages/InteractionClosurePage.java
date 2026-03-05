@@ -26,6 +26,8 @@ public class InteractionClosurePage extends BasePage {
     private final By leaveInteractionButton = AppiumBy.accessibilityId("Leave Interaction");
     private final By confirmLeaveButton = AppiumBy.accessibilityId("Yes, sure");
     private final By cancelButton = AppiumBy.accessibilityId("Cancel");
+    private final By dismissButton = AppiumBy.accessibilityId("Dismiss");
+
 
     // ✅ Constructor: gets driver from BaseTest
     public InteractionClosurePage(AndroidDriver driver) {
@@ -42,8 +44,18 @@ public class InteractionClosurePage extends BasePage {
         waitAndSendKeys(addNotesField,"Hi, notes are added here :)");
         System.out.println("🟢 Added note text");
 
-        waitAndClick(notesBackButton);
-        System.out.println("🟢 Clicked Back Button from Notes");
+//        waitAndClick(notesBackButton);
+//        System.out.println("🟢 Clicked Back Button from Notes");
+
+//        waitAndClick(dismissButton);
+//        System.out.println("🟢 Clicked Outside the bottom sheet from Notes");
+
+    }
+
+    // Tap near top of screen — safely outside the bottom sheet
+    public void dismissBottomSheet() {
+        tapByCoordinates(540, 300);
+        System.out.println("🟢 Dismissed bottom sheet by tapping outside");
     }
 
     // Applying work codes

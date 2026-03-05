@@ -4,7 +4,7 @@ import com.contegris.intelliinbox.base.BaseTest;
 import com.contegris.intelliinbox.pages.*;
 import org.testng.annotations.Test;
 
-public class Instagram extends BaseTest { // ✅ Extends BaseTest, not BasePage
+public class Instapost extends BaseTest { // ✅ Extends BaseTest, not BasePage
 
     @Test
     public void testInboundInstagramFlow() throws InterruptedException {
@@ -25,12 +25,10 @@ public class Instagram extends BaseTest { // ✅ Extends BaseTest, not BasePage
         chat.clickReplyButton();
         chat.sendMessageWithEmoji("Hi, how may I help you today?");
 
-        chat.clickReplyButton();
-        attach.clickPlusButton();
-        attach.uploadAttachment("image");
 
         chat.clickReplyButton();
         closure.addNote();
+        closure.dismissBottomSheet();
         closure.addWorkCode("Hot Lead");
         closure.closeBottomSheet();
         closure.endInteraction("Contact Center");

@@ -6,17 +6,21 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+
+import java.time.Duration;
 
 public class InteractionFlowPage extends BasePage {
 
     // 🔹 Common Locators
     private final By templatesButton = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[2]");
     private final By whatsappTemplateTab = AppiumBy.accessibilityId("WhatsApp Templates\nTab 2 of 2");
-    private final By sendButton = AppiumBy.accessibilityId("Send");
+    private final By sendButton = AppiumBy.xpath("Send");
     private final By emojiButton = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id='android:id/content']/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]");
     private final By secondEmojiTab = AppiumBy.xpath("//android.view.View[@content-desc='Tab 2 of 9']");
     private final By smileEmoji = AppiumBy.xpath("//android.widget.Button[@content-desc=\"\uD83D\uDE42\"]");
+    private final By sendMessageButton = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]");
     private final By messageInput = AppiumBy.xpath("//android.widget.EditText");
     private final By expiryMessage = AppiumBy.xpath("//android.view.View[contains(@content-desc, 'within 24 hours')]");
     private final By voiceNoteButton = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]");
@@ -38,9 +42,18 @@ public class InteractionFlowPage extends BasePage {
     }
 
     public void clickReplyButton() throws InterruptedException {
+        scrollIntoView("Reply");
         waitAndClick(replyButton);
         System.out.println("Reply button gets clicked");
         Thread.sleep(2000);
+    }
+
+    // Wait for the EditText (reply input) to DISAPPEAR — signals panel is closed
+    public void waitForReplyPanelToClose() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath("//android.widget.EditText")
+        ));
     }
 
     // 🔹 1. Send Canned Message
@@ -81,12 +94,8 @@ public class InteractionFlowPage extends BasePage {
         waitAndClick(smileEmoji);
         System.out.println("😊 Emoji added");
 
-        WebElement sendMsgButton = wait.until(ExpectedConditions.elementToBeClickable(
-                AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[4]")));
-        sendMsgButton.click();
+        waitAndClick(sendMessageButton);
         System.out.println("✅ Message with emoji sent");
-
-        waitAndClick(emojiButton); // close emoji picker
     }
 
     // 🔹 4. Record and Send Voice Note
