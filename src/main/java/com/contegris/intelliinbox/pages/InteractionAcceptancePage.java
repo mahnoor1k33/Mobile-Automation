@@ -16,8 +16,10 @@ import java.time.Duration;
 public class InteractionAcceptancePage extends BasePage {
 
     // ---------- LOCATORS ---------- //
-    private final By teamInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[2]");
-    private final By myInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]");
+//    private final By teamInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[2]");
+//    private final By myInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]");
+    private final By myInboxTab = AppiumBy.androidUIAutomator("new UiSelector().className(\"android.widget.ImageView\").instance(5)");
+    private final By teamInboxTab = AppiumBy.androidUIAutomator("new UiSelector().className(\"android.widget.ImageView\").instance(6)");
     private final By joinButton = AppiumBy.accessibilityId("Join");
     private final By assignButton = AppiumBy.accessibilityId("Assign");
     private final By acceptButton = AppiumBy.accessibilityId("New Call request from \\nMahnoor QA\\nDefaultIVR\\ndefaultQueue\\nAccept");
@@ -31,36 +33,39 @@ public class InteractionAcceptancePage extends BasePage {
     // ---------- TEAM INBOX SECTION ---------- //
 
     // Opens the Team Inbox tab
-    public void openTeamInbox() {
-        wait.until(ExpectedConditions.elementToBeClickable(teamInboxTab)).click();
-        System.out.println("Opened Team Inbox");
-    }
+    // Used Bounds here for the time being until the developer adds the id for it!
+    // Not using xpath, cause it crashes the app due to deep links
     public void openMyInbox() {
-        wait.until(ExpectedConditions.elementToBeClickable(myInboxTab)).click();
-        System.out.println("Back to My Inbox");
+        tapByCoordinates(88, 1440);
+        System.out.println("✓ Opened My Inbox");
+    }
+
+    public void openTeamInbox() {
+        tapByCoordinates(222, 1441);
+        System.out.println("✓ Opened Team Inbox");
     }
 
     // This will specifically click on the Channel Filters displaying at the Top
     public void selectChannel(Channel channel) throws InterruptedException {
 
-        // scrollToBeginning is fast — stops immediately if already at start
+        // Step 1: Reset — scrollable(true) correctly matches the channel tab bar
         driver.findElement(AppiumBy.androidUIAutomator(
                 "new UiScrollable(new UiSelector().scrollable(true))" +
-                        ".setAsHorizontalList()" +
-                        ".scrollToBeginning(5)"
+                        ".setAsHorizontalList().scrollToBeginning(5)"
         ));
+        Thread.sleep(300);
 
-        // scrollIntoView handles its own timing internally
-        // 200ms is enough for scroll animation to settle
-        Thread.sleep(200);
-
+        // Step 2: Scroll into view only
         driver.findElement(AppiumBy.androidUIAutomator(
                 "new UiScrollable(new UiSelector().scrollable(true))" +
-                        ".setAsHorizontalList()" +
-                        ".setMaxSearchSwipes(10)" +
-                        ".scrollIntoView(" +
-                        "    new UiSelector().descriptionContains(\"" + channel.getLabel() + "\")" +
-                        ")"
+                        ".setAsHorizontalList().setMaxSearchSwipes(10)" +
+                        ".scrollIntoView(new UiSelector().descriptionContains(\"" + channel.getLabel() + "\"))"
+        ));
+        Thread.sleep(300);
+
+        // Step 3: Click independently using UIAutomator descriptionContains
+        driver.findElement(AppiumBy.androidUIAutomator(
+                "new UiSelector().descriptionContains(\"" + channel.getLabel() + "\")"
         )).click();
 
         System.out.println("✓ Selected channel: " + channel.getLabel());
