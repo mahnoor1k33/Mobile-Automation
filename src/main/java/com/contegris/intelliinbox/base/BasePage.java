@@ -50,6 +50,11 @@ public class BasePage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    protected WebElement waitForToast(By locator) {
+        return new WebDriverWait(driver, Duration.ofSeconds(3))
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
     // Returns true if the element is present, otherwise false
     protected boolean isElementPresent(By locator) {
         try {
