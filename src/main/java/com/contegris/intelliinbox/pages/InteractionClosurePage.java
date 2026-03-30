@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class InteractionClosurePage extends BasePage {
 
-    // ✅ Locators
+    // Locators
     private final By plusButton = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id='android:id/content']" +
             "/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/" +
             "android.view.View/android.view.View/android.view.View/android.widget.ImageView[3]");
@@ -29,7 +29,7 @@ public class InteractionClosurePage extends BasePage {
     private final By dismissButton = AppiumBy.accessibilityId("Dismiss");
 
 
-    // ✅ Constructor: gets driver from BaseTest
+    // Constructor: gets driver from BaseTest
     public InteractionClosurePage(AndroidDriver driver) {
         super(driver);
     }
@@ -38,71 +38,71 @@ public class InteractionClosurePage extends BasePage {
     public void addNote() {
         waitAndClick(plusButton);
         waitAndClick(notesButton);
-        System.out.println("🟢 Clicked Notes");
+        System.out.println("Clicked Notes");
 
         waitAndClick(addNotesField);
         waitAndSendKeys(addNotesField,"Hi, notes are added here :)");
-        System.out.println("🟢 Added note text");
+        System.out.println("Added note text");
 
 //        waitAndClick(notesBackButton);
-//        System.out.println("🟢 Clicked Back Button from Notes");
+//        System.out.println("Clicked Back Button from Notes");
 
 //        waitAndClick(dismissButton);
-//        System.out.println("🟢 Clicked Outside the bottom sheet from Notes");
+//        System.out.println("Clicked Outside the bottom sheet from Notes");
 
     }
 
     // Tap near top of screen — safely outside the bottom sheet
     public void dismissBottomSheet() {
         tapByCoordinates(540, 300);
-        System.out.println("🟢 Dismissed bottom sheet by tapping outside");
+        System.out.println("Dismissed bottom sheet by tapping outside");
     }
 
     // Applying work codes
     public void openPlusMenu() {
         try {
             waitAndClick(plusButton);
-            System.out.println("✅ Plus (+) menu opened successfully");
+            System.out.println("Plus (+) menu opened successfully");
         } catch (Exception e) {
-            System.out.println("❌ Failed to open Plus menu: " + e.getMessage());
+            System.out.println("Failed to open Plus menu: " + e.getMessage());
         }
     }
 
-    // ✅ Step: Add Work Code (combined flow)
+    // Add Work Code (combined flow)
     public void addWorkCode(String workCodeName) {
         try {
             // Open Work Codes modal
             waitAndClick(workCodesButton);
-            System.out.println("✅ Work Codes option clicked");
+            System.out.println("Work Codes option clicked");
 
             // Select specific Work Code
             WebElement workCode = wait.until(ExpectedConditions.elementToBeClickable(
                     AppiumBy.xpath("//android.view.View[contains(@content-desc, '" + workCodeName + "')]")));
             workCode.click();
-            System.out.println("✅ Selected Work Code: " + workCodeName);
+            System.out.println("Selected Work Code: " + workCodeName);
 
             // Close modal
             waitAndClick(closeWorkCodeButton);
-            System.out.println("✅ Closed Work Code modal successfully");
+            System.out.println("Closed Work Code modal successfully");
 
         } catch (Exception e) {
-            System.out.println("❌ Failed to add Work Code '" + workCodeName + "': " + e.getMessage());
+            System.out.println("Failed to add Work Code '" + workCodeName + "': " + e.getMessage());
         }
     }
 
 
-    // ✅ Step 5: Close Bottom Sheet modal
+    // Close Bottom Sheet modal
     public void closeBottomSheet () {
 
         try {
             waitAndClick(closeAddModal);
-            System.out.println("✅ Bottom Sheet gets Closed");
+            System.out.println("Bottom Sheet gets Closed");
         } catch (Exception e) {
-            System.out.println("❌ Failed to close the Bottom Sheet: " + e.getMessage());
+            System.out.println("Failed to close the Bottom Sheet: " + e.getMessage());
         }
     }
 
-    // ✅ Method to End or Leave Interaction safely
+    // Method to End or Leave Interaction safely
     public void endInteraction(String workCodeName) {
         try {
             waitAndClick(moreButton);
@@ -131,7 +131,7 @@ public class InteractionClosurePage extends BasePage {
                     WebElement workCode = wait.until(ExpectedConditions.elementToBeClickable(
                             AppiumBy.xpath("//android.view.View[contains(@content-desc, '" + workCodeName + "')]")));
                     workCode.click();
-                    System.out.println("✅ Selected Work Code: " + workCodeName);
+                    System.out.println("Selected Work Code: " + workCodeName);
                     isElementPresent(endInteractionButton);
                     waitAndClick(endInteractionButton);
                 }

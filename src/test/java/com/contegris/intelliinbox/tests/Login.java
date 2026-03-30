@@ -9,7 +9,7 @@ public class Login extends BaseTest { // ← Extends BaseTest, NOT BasePage
 
     @Test
     public void verifyLoginFlow() throws Exception {
-        // driver is already initialized by @BeforeMethod in BaseTest
+        // Driver is already initialized by @BeforeMethod in BaseTest
 
         LoginPage loginPage = new LoginPage(driver); // ← Pass driver to page
 

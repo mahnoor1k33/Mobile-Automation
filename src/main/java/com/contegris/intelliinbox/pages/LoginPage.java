@@ -12,13 +12,14 @@ import java.util.Map;
 public class LoginPage extends BasePage {
 
     // Constructor - MUST accept driver
-    public LoginPage(AndroidDriver driver) {
+    public LoginPage(AndroidDriver driver)
+    {
         super(driver); // Pass to BasePage constructor
     }
 
     // Locators
-    private final By nextButton = AppiumBy.accessibilityId("Next");
     private final By domainField = By.xpath("//android.widget.EditText");
+    private final By nextButton = AppiumBy.accessibilityId("Next");
     private final By usernameField = AppiumBy.xpath("//android.view.View[@content-desc='Enter your username or email']/android.widget.EditText");
     private final By passwordField = AppiumBy.xpath("//android.view.View[@content-desc=\"Enter your password\"]/android.widget.EditText");
     private final By signInButton = AppiumBy.xpath("//android.widget.Button[@content-desc=\"Sign In\"]");
@@ -26,24 +27,26 @@ public class LoginPage extends BasePage {
     private final By myInboxHeading = AppiumBy.accessibilityId("My Inbox");
 
     // Page Methods - Use helper methods from BasePage
-    public void launchApp() {
+    public void launchApp()
+    {
+        driver.activateApp("com.contegris.intelli_inbox");
         System.out.println("Intellicon App launched successfully!");
     }
 
+    // Checks if the User is already Logged In
+    public boolean isAlreadyLoggedIn() {
+        return isElementPresentQuick(myInboxHeading, 3);
+    }
     public void enterDomainIfVisible(String domain) {
-        if (isElementPresent(allowButton)) { // ← Using BasePage method
-            waitAndClick(allowButton);       // ← Using BasePage method
-            System.out.println("Permission allowed");
+        // Quick checks (don't wait long)
+        if (isElementPresentQuick(allowButton, 2)) {
+            waitAndClick(allowButton);
         }
 
-        if (isElementPresent(domainField)) {
+        if (isElementPresentQuick(nextButton, 3)) {
             waitAndClick(domainField);
-            waitAndSendKeys(domainField, domain); // ← Using BasePage method
-
-            if (isElementPresent(nextButton)) {
-                waitAndClick(nextButton);
-                System.out.println("Domain entered and Next clicked");
-            }
+            waitAndSendKeys(domainField, domain);
+            waitAndClick(nextButton);
         } else {
             System.out.println("Domain screen not displayed, skipping to login");
         }
@@ -62,7 +65,7 @@ public class LoginPage extends BasePage {
 
     public void verifyMyInboxScreen() {
         WebElement heading = waitForVisible(myInboxHeading); // ← Using BasePage method
-        Assert.assertEquals(heading.getText(), "My Inbox", "❌ My Inbox heading not displayed");
+        Assert.assertEquals(heading.getText(), "My Inbox", "My Inbox heading not displayed");
         System.out.println("My Inbox screen verified");
     }
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Post Based Suite" verbose="1">
+
+    <test name="Facebook Post Flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.FBpost"/>
+        </classes>
+    </test>
+
+    <test name="Instagram Post Flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.Instapost"/>
+        </classes>
+    </test>
+
+</suite>

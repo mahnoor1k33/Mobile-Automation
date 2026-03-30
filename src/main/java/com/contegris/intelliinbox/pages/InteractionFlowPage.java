@@ -16,7 +16,7 @@ public class InteractionFlowPage extends BasePage {
     // 🔹 Common Locators
     private final By templatesButton = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[2]");
     private final By whatsappTemplateTab = AppiumBy.accessibilityId("WhatsApp Templates\nTab 2 of 2");
-    private final By sendButton = AppiumBy.xpath("Send");
+    private final By sendButton = AppiumBy.accessibilityId("Send");
     private final By emojiButton = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id='android:id/content']/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]");
     private final By secondEmojiTab = AppiumBy.xpath("//android.view.View[@content-desc='Tab 2 of 9']");
     private final By smileEmoji = AppiumBy.xpath("//android.widget.Button[@content-desc=\"\uD83D\uDE42\"]");
@@ -35,10 +35,10 @@ public class InteractionFlowPage extends BasePage {
     private final By addNotesField = AppiumBy.xpath("//android.widget.EditText");
     private final By notesBackButton = AppiumBy.xpath("//android.view.View[@content-desc='Notes\nAdd Note']/android.widget.ImageView[2]");
 
-    // 🔹 Constructor - FIXED
+    // Constructor - FIXED
     public InteractionFlowPage(AndroidDriver driver) {
-        super(driver); // ✅ Pass driver to BasePage constructor
-        // No need to initialize driver and wait again - BasePage does it!
+        super(driver); // Pass driver to BasePage constructor
+        // No need to initialize the driver and wait again - BasePage does it!
     }
 
     public void clickReplyButton() throws InterruptedException {
@@ -48,7 +48,7 @@ public class InteractionFlowPage extends BasePage {
         Thread.sleep(2000);
     }
 
-    // Wait for the EditText (reply input) to DISAPPEAR — signals panel is closed
+    // Wait for the EditText (reply input) to DISAPPEAR — signals the panel is closed
     public void waitForReplyPanelToClose() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(
@@ -59,19 +59,19 @@ public class InteractionFlowPage extends BasePage {
     // 🔹 1. Send Canned Message
     public void sendCannedMessage(String cannedMessageName) {
         waitAndClick(templatesButton);
-        System.out.println("📩 Clicked Templates button");
+        System.out.println("Clicked Templates button");
 
         waitAndClick(AppiumBy.accessibilityId(cannedMessageName));
-        System.out.println("✅ Canned message '" + cannedMessageName + "' sent successfully!");
+        System.out.println("Canned message '" + cannedMessageName + "' sent successfully!");
     }
 
     // 🔹 2. Send WhatsApp Template
     public void sendWhatsAppTemplate(String templateName) {
         waitAndClick(templatesButton);
-        System.out.println("📲 Opened Templates section");
+        System.out.println("Opened Templates section");
 
         waitAndClick(whatsappTemplateTab);
-        System.out.println("🟢 Switched to WhatsApp Templates tab");
+        System.out.println("Switched to WhatsApp Templates tab");
 
         WebElement template = wait.until(ExpectedConditions.elementToBeClickable(
                 AppiumBy.androidUIAutomator(
@@ -80,48 +80,48 @@ public class InteractionFlowPage extends BasePage {
         template.click();
 
         waitAndClick(sendButton);
-        System.out.println("✅ WhatsApp template '" + templateName + "' sent successfully!");
+        System.out.println("WhatsApp template '" + templateName + "' sent successfully!");
     }
 
     // 🔹 3. Send Message with Emoji
     public void sendMessageWithEmoji(String messageText) {
         waitAndClick(messageInput);
         waitAndSendKeys(messageInput, messageText);
-        System.out.println("💬 Typed message: " + messageText);
+        System.out.println("Typed message: " + messageText);
 
         waitAndClick(emojiButton);
         waitAndClick(secondEmojiTab);
         waitAndClick(smileEmoji);
-        System.out.println("😊 Emoji added");
+        System.out.println("Emoji added");
 
         waitAndClick(sendMessageButton);
-        System.out.println("✅ Message with emoji sent");
+        System.out.println("Message with emoji sent");
     }
 
     // 🔹 4. Record and Send Voice Note
     public void recordAndSendVoiceNote() {
         try {
-            System.out.println("🎤 Starting voice note flow...");
+            System.out.println("Starting voice note flow...");
 
             waitAndClick(voiceNoteButton);
-            System.out.println("🎙 Recording started...");
+            System.out.println("Recording started...");
 
-            // Wait until pause button is visible and clickable
+            // Wait until the pause button is visible and clickable
             waitUntilClickable(pauseButton, 10);
             waitAndClick(pauseButton);
-            System.out.println("⏸ Recording paused...");
+            System.out.println("Recording paused...");
 
-            // Wait until resume button is visible and clickable
+            // Wait until the resume button is visible and clickable
             waitUntilClickable(resumeButton, 10);
             waitAndClick(resumeButton);
-            System.out.println("▶️ Recording resumed...");
+            System.out.println("Recording resumed...");
 
             waitUntilClickable(sendVoiceNoteButton, 10);
             waitAndClick(sendVoiceNoteButton);
-            System.out.println("✅ Voice note sent successfully!");
+            System.out.println("Voice note sent successfully!");
 
         } catch (Exception e) {
-            System.out.println("❌ Voice note flow failed: " + e.getMessage());
+            System.out.println("Voice note flow failed: " + e.getMessage());
         }
     }
 
@@ -129,28 +129,28 @@ public class InteractionFlowPage extends BasePage {
         try {
             if(!isElementPresent(messageInput)) {
                 isElementPresent(expiryMessage);
-                System.out.println("✅ WhatsApp 24-hour expiry message verified.");
+                System.out.println("WhatsApp 24-hour expiry message verified.");
             } else {
                 System.out.println("Editor is enabled");
                 sendCannedMessage("Thanks");
                 sendMessageWithEmoji("Hi!");
             }
         } catch (Exception e) {
-            System.out.println("❌ Failed to verify WhatsApp window expiry: " + e.getMessage());
+            System.out.println("Failed to verify WhatsApp window expiry: " + e.getMessage());
         }
     }
 
     public void addNote() {
         waitAndClick(plusButton);
         waitAndClick(notesButton);
-        System.out.println("🟢 Clicked Notes");
+        System.out.println("Clicked Notes");
 
         WebElement noteField = wait.until(ExpectedConditions.elementToBeClickable(addNotesField));
         noteField.click();
         noteField.sendKeys("Hi, notes are added here :)");
-        System.out.println("🟢 Added note text");
+        System.out.println("Added note text");
 
         waitAndClick(notesBackButton);
-        System.out.println("🟢 Clicked Back Button from Notes");
+        System.out.println("Clicked Back Button from Notes");
     }
 }

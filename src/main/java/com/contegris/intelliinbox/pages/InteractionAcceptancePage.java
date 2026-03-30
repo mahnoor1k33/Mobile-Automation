@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import com.contegris.intelliinbox.enums.Channel;
 
 import java.time.Duration;
 
@@ -16,6 +17,7 @@ public class InteractionAcceptancePage extends BasePage {
 
     // ---------- LOCATORS ---------- //
     private final By teamInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[2]");
+    private final By myInboxTab = AppiumBy.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]");
     private final By joinButton = AppiumBy.accessibilityId("Join");
     private final By assignButton = AppiumBy.accessibilityId("Assign");
     private final By acceptButton = AppiumBy.accessibilityId("New Call request from \\nMahnoor QA\\nDefaultIVR\\ndefaultQueue\\nAccept");
@@ -28,25 +30,64 @@ public class InteractionAcceptancePage extends BasePage {
 
     // ---------- TEAM INBOX SECTION ---------- //
 
-    /** Opens the Team Inbox tab */
+    // Opens the Team Inbox tab
     public void openTeamInbox() {
         wait.until(ExpectedConditions.elementToBeClickable(teamInboxTab)).click();
-        System.out.println("📂 Opened Team Inbox.");
+        System.out.println("Opened Team Inbox");
+    }
+    public void openMyInbox() {
+        wait.until(ExpectedConditions.elementToBeClickable(myInboxTab)).click();
+        System.out.println("Back to My Inbox");
     }
 
-    /** Clicks the first available card based on customer name */
-    public void clickFirstCard(String lastMessage) {
+    // This will specifically click on the Channel Filters displaying at the Top
+    public void selectChannel(Channel channel) throws InterruptedException {
+
+        // scrollToBeginning is fast — stops immediately if already at start
+        driver.findElement(AppiumBy.androidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true))" +
+                        ".setAsHorizontalList()" +
+                        ".scrollToBeginning(5)"
+        ));
+
+        // scrollIntoView handles its own timing internally
+        // 200ms is enough for scroll animation to settle
+        Thread.sleep(200);
+
+        driver.findElement(AppiumBy.androidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true))" +
+                        ".setAsHorizontalList()" +
+                        ".setMaxSearchSwipes(10)" +
+                        ".scrollIntoView(" +
+                        "    new UiSelector().descriptionContains(\"" + channel.getLabel() + "\")" +
+                        ")"
+        )).click();
+
+        System.out.println("✓ Selected channel: " + channel.getLabel());
+    }
+
+    // Clicks the first available card based on customer name
+    public void clickFirstCard() {
         WebElement firstCard = wait.until(ExpectedConditions.elementToBeClickable(
-                AppiumBy.androidUIAutomator(
-                        "new UiScrollable(new UiSelector().scrollable(true))" +
-                                ".scrollIntoView(new UiSelector().descriptionContains(\"" + lastMessage + "\"))"
+                AppiumBy.xpath(
+                        "(//android.view.View[@clickable='true' and contains(@content-desc, '/')])[1]"
                 )
         ));
         firstCard.click();
-        System.out.println("The last message in this Interaction is: " + lastMessage);
+        System.out.println("✓ Clicked on first card");
     }
 
-    /** Clicks either 'Join' or 'Assign' button based on availability */
+    public void clickFirstCardWebChat() {
+        WebElement firstCard = wait.until(ExpectedConditions.elementToBeClickable(
+                AppiumBy.xpath(
+                        "(//android.view.View[contains(@content-desc, 'Web Client')])[1]")
+        ));
+        firstCard.click();
+        System.out.println("Clicked on the First Card");
+        // Need to check this Last message Out!
+    }
+
+    // Clicks either 'Join' or 'Assign' button based on availability
     private boolean isElementDisplayed(By locator, WebDriverWait wait) {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -61,72 +102,72 @@ public class InteractionAcceptancePage extends BasePage {
 
         if (isElementDisplayed(assignButton, shortWait)) {
             driver.findElement(assignButton).click();
-            System.out.println("✅ Assigned interaction successfully.");
+            System.out.println("Assigned interaction successfully.");
             return;
         }
 
         if (isElementDisplayed(joinButton, shortWait)) {
             driver.findElement(joinButton).click();
-            System.out.println("✅ Joined interaction successfully.");
+            System.out.println("Joined interaction successfully.");
             return;
         }
 
-        System.out.println("ℹ️ Interaction already assigned. Skipping.");
+        System.out.println("Interaction already assigned. Skipping.");
     }
 
     // ---------- INBOUND INTERACTION SECTION ---------- //
 
-    /** Waits for and accepts an incoming interaction */
+    //  Waits for and accepts an incoming interaction
     public void acceptIncomingInteraction() {
         if (isIncomingRequestVisible()) {
             try {
                 wait.until(ExpectedConditions.elementToBeClickable(acceptButton)).click();
-                System.out.println("✅ Accepted the incoming interaction.");
+                System.out.println("Accepted the incoming interaction.");
             } catch (Exception e) {
-                System.out.println("⚠️ Accept button not found, trying fallback...");
+                System.out.println("Accept button not found, trying fallback...");
                 clickCardContaining("Accept");
             }
         } else {
-            System.out.println("🚫 No incoming interaction visible.");
+            System.out.println("No incoming interaction visible.");
         }
     }
 
-    /** Waits for and rejects an incoming interaction */
+    // Waits for and rejects an incoming interaction
     public void rejectIncomingInteraction() {
         if (isIncomingRequestVisible()) {
             try {
                 wait.until(ExpectedConditions.elementToBeClickable(rejectButton)).click();
-                System.out.println("❌ Rejected the incoming interaction.");
+                System.out.println("Rejected the incoming interaction.");
             } catch (Exception e) {
-                System.out.println("⚠️ Reject button not found, trying fallback...");
+                System.out.println("Reject button not found, trying fallback...");
                 clickCardContaining("Reject");
             }
         } else {
-            System.out.println("🚫 No incoming interaction visible.");
+            System.out.println("No incoming interaction visible.");
         }
     }
 
-    /** Checks if any incoming interaction card is visible */
+    // Checks if any incoming interaction card is visible
     public boolean isIncomingRequestVisible() {
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(incomingRequestCard));
-            System.out.println("📩 Incoming request detected.");
+            System.out.println("Incoming request detected.");
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    /** Fallback: clicks a card containing the given keyword */
+    // Fallback: clicks a card containing the given keyword
     private void clickCardContaining(String keyword) {
         try {
             WebElement card = wait.until(ExpectedConditions.elementToBeClickable(
                     AppiumBy.androidUIAutomator(
                             "new UiSelector().descriptionContains(\"" + keyword + "\")")));
             card.click();
-            System.out.println("✅ Clicked card containing '" + keyword + "'.");
+            System.out.println("Clicked card containing '" + keyword + "'.");
         } catch (Exception e) {
-            System.out.println("⚠️ Element still not clickable. Trying coordinate tap...");
+            System.out.println("Element still not clickable. Trying coordinate tap...");
             new TouchAction(driver)
                     .tap(PointOption.point(287, 564))
                     .perform();

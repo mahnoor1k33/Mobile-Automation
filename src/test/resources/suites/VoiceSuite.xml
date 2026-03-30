@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Voice Suite" verbose="1">
+
+    <test name="Call Flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.Call"/>
+        </classes>
+    </test>
+
+</suite>

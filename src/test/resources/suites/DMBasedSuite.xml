@@ -1,0 +1,34 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="DM Based Suite" verbose="1">
+
+    <test name="Login Flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.Login"/>
+        </classes>
+    </test>
+
+    <test name="WhatsApp DM Flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.WhatsApp"/>
+        </classes>
+    </test>
+
+    <test name="Instagram DM flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.InstagramDM"/>
+        </classes>
+    </test>
+
+    <test name="Facebook DM flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.FacebookDM"/>
+        </classes>
+    </test>
+
+    <test name="WebChat DM flow">
+        <classes>
+            <class name="com.contegris.intelliinbox.tests.WebChat"/>
+        </classes>
+    </test>
+
+</suite>

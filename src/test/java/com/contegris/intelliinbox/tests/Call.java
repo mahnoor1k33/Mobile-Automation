@@ -14,13 +14,13 @@ public class Call extends BaseTest {
         OutboundModalPage outbound = new OutboundModalPage(driver);
         SideBarMenuPage menu = new SideBarMenuPage(driver);
 
-        System.out.println("🚀 Starting Outbound Call Flow...");
+        System.out.println("Starting Outbound Call Flow...");
         outbound.makeOutboundCall("03057204466");
         outbound.muteUnmuteHoldSpeakerFlow();
         outbound.endCallFlow();
         menu.resetPresenceIfNeeded();
         menu.closeSideMenu();
-        System.out.println("✅ Outbound Call Flow completed successfully!");
+        System.out.println("Outbound Call Flow completed successfully!");
     }
 
     @Test

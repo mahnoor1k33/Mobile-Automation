@@ -1,20 +1,22 @@
+
 package com.contegris.intelliinbox.base;
 
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 
-/**
- * BasePage: Provides reusable helper methods for all Page Objects
- * Pages extend this to access common actions like waitAndClick()
- */
+// BasePage: Provides reusable helper methods for all Page Objects
 
 public class BasePage {
     protected AndroidDriver driver;
@@ -29,22 +31,26 @@ public class BasePage {
     // ========== HELPER METHODS ==========
     // These are the "reusable utilities" pages need
 
+
+    // Waits for an element to be clickable and clicks it.
     protected void waitAndClick(By locator) {
         wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
-        System.out.println("✅ Clicked: " + locator);
     }
 
+    // Waits for an element to be visible, clears it, and types the given text
     protected void waitAndSendKeys(By locator, String text) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         element.clear();
-        element.sendKeys(text);
-        System.out.println("✅ Sent keys to: " + locator);
+        element.click();
+        driver.executeScript("mobile: type", Map.of("text", text));
     }
 
+    // Waits for an element to be visible and returns it
     protected WebElement waitForVisible(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    // Returns true if the element is present, otherwise false
     protected boolean isElementPresent(By locator) {
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(locator));
@@ -54,6 +60,18 @@ public class BasePage {
         }
     }
 
+    // Quickly checks if an element is present within a custom timeout
+    protected boolean isElementPresentQuick(By locator, int timeoutSeconds) {
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
+                    .until(ExpectedConditions.presenceOfElementLocated(locator));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    // Waits until the element is clickable within the given timeout
     protected void waitUntilClickable(By locator, int timeoutSeconds) {
         WebDriverWait customWait = new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds));
         customWait.until(ExpectedConditions.elementToBeClickable(locator));
@@ -103,7 +121,6 @@ public class BasePage {
             // Element already visible or not found — safe to ignore
         }
     }
-
 
     // Tap anywhere via Coordinates
     public void tapByCoordinates(int x, int y) {

@@ -1,6 +1,5 @@
 package com.contegris.intelliinbox.pages;
 
-import com.contegris.intelliinbox.pages.system.MediaPickerPage;
 import com.contegris.intelliinbox.base.BasePage;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
@@ -71,14 +70,14 @@ public class AttachmentModalPage extends BasePage {
 
     // ========== Constructor ==========
     public AttachmentModalPage(AndroidDriver driver) {
-        super(driver); // ✅ Pass driver to BasePage
+        super(driver); // Pass driver to BasePage
         // driver and wait are now inherited from BasePage
     }
 
     // ========== Actions ==========
     public void clickPlusButton() {
         waitAndClick(plusButton);
-        System.out.println("✅ Clicked on '+' button to open menu");
+        System.out.println("Clicked on '+' button to open menu");
     }
 
     public void uploadAttachment(String type) {
@@ -103,7 +102,7 @@ public class AttachmentModalPage extends BasePage {
         waitAndClick(secondImageJpeg);
         waitUntilClickable(sendButton, 15);
         waitAndClick(sendButton);
-        System.out.println("✅ Sent an image");
+        System.out.println("Sent an image");
     }
 
     private void uploadVideo() {
@@ -118,7 +117,7 @@ public class AttachmentModalPage extends BasePage {
         waitAndClick(firstVideoMp4);
         waitUntilClickable(sendButton, 15);
         waitAndClick(sendButton);
-        System.out.println("✅ Sent a video");
+        System.out.println("Sent a video");
     }
 
     private void uploadAudio() {
@@ -134,7 +133,7 @@ public class AttachmentModalPage extends BasePage {
         waitAndClick(firstAudioM4a);
         waitUntilClickable(sendButton, 15);
         waitAndClick(sendButton);
-        System.out.println("✅ Sent an audio");
+        System.out.println("Sent an audio");
     }
 
     private void uploadDocument() {
@@ -149,7 +148,7 @@ public class AttachmentModalPage extends BasePage {
         waitAndClick(firstDocumentXls);
         waitUntilClickable(sendButton, 15);
         waitAndClick(sendButton);
-        System.out.println("✅ Sent a document");
+        System.out.println("Sent a document");
     }
 
     // ========== Helper ==========

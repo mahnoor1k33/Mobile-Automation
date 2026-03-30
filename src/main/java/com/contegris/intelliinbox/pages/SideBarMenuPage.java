@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SideBarMenuPage extends BasePage {
 
-    // 🔹 Locators
+    // Locators
     private final By sideMenuButton = AppiumBy.xpath(
             "//android.widget.FrameLayout[@resource-id='android:id/content']"
                     + "/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View"
@@ -24,20 +24,20 @@ public class SideBarMenuPage extends BasePage {
     private final By readyOption = AppiumBy.accessibilityId("Ready");
     private final By logoutButton = AppiumBy.accessibilityId("Logout");
 
-    // ✅ Constructor
+    // Constructor
     public SideBarMenuPage(AndroidDriver driver) {
         super(driver); // Pass driver to BasePage
     }
 
     // ======================== ACTION METHODS ========================
 
-    // 🔸 Open side menu
+    // Open side menu
     public void openSideMenu() {
         waitAndClick(sideMenuButton); // Use inherited helper method
-        System.out.println("✅ Side menu opened");
+        System.out.println("Side menu opened");
     }
 
-    // 🔸 Reset presence to Ready if needed
+    // Reset presence to Ready if needed
     public void resetPresenceIfNeeded() {
         WebElement statusElement = wait.until(ExpectedConditions.presenceOfElementLocated(presenceIcon));
         String currentStatus = statusElement.getAttribute("contentDescription");
@@ -45,13 +45,13 @@ public class SideBarMenuPage extends BasePage {
         if (!"Ready".equalsIgnoreCase(currentStatus)) {
             statusElement.click();
             waitAndClick(readyOption); // Use inherited helper method
-            System.out.println("🔄 Presence reset to Ready");
+            System.out.println("Presence reset to Ready");
         } else {
-            System.out.println("✅ Presence already Ready");
+            System.out.println("Presence already Ready");
         }
     }
 
-    // 🔸 Close side menu (tap outside using coordinates)
+    // Close side menu (tap outside using coordinates)
     public void closeSideMenu() {
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         Sequence tap = new Sequence(finger, 1);
@@ -59,12 +59,12 @@ public class SideBarMenuPage extends BasePage {
         tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
         tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(List.of(tap));
-        System.out.println("✅ Side menu closed");
+        System.out.println("Side menu closed");
     }
 
-    // 🔸 Logout from the app
+    // Logout from the app
     public void clickLogout() {
         waitAndClick(logoutButton); // Use inherited helper method
-        System.out.println("🚪 Logged out successfully");
+        System.out.println("Logged out successfully");
     }
 }

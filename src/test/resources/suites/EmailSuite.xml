@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Email Suite" verbose="1">
+
+<!--    <test name="Email Inbound Flow">-->
+<!--        <classes>-->
+<!--            <class name="com.contegris.intelliinbox.tests.Email"/>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+</suite>
